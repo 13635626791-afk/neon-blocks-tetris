@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#07090d" />
+    <meta name="description" content="Neon Blocks：支持键盘与触屏的经典俄罗斯方块游戏" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>Neon Blocks｜经典俄罗斯方块</title>
+  </head>
+  <body>
+    <div class="ambient ambient-a" aria-hidden="true"></div>
+    <div class="ambient ambient-b" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Neon Blocks 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <i></i><i></i><i></i><i></i>
+        </span>
+        <span>
+          <strong>NEON BLOCKS</strong>
+          <small>经典俄罗斯方块</small>
+        </span>
+      </a>
+
+      <div class="top-actions">
+        <button class="icon-button" id="soundButton" type="button" aria-label="关闭音效" title="切换音效">
+          <svg class="sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9v6h4l5 4V5L9 9H5Zm12.5 3A4.5 4.5 0 0 0 15 7.97v8.06A4.5 4.5 0 0 0 17.5 12Zm0-8.15v2.06a7 7 0 0 1 0 12.18v2.06a9 9 0 0 0 0-16.3Z"/></svg>
+          <svg class="sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9v6h4l5 4V5L9 9H5Zm11.6 3 2.2-2.2-1.4-1.4-2.2 2.2L13 8.4 11.6 9.8l2.2 2.2-2.2 2.2 1.4 1.4 2.2-2.2 2.2 2.2 1.4-1.4-2.2-2.2Z"/></svg>
+        </button>
+        <button class="text-button secondary" id="pauseButton" type="button">
+          <span class="pause-glyph" aria-hidden="true">Ⅱ</span>
+          <span class="pause-label">暂停</span>
+        </button>
+        <button class="text-button primary" id="newGameButton" type="button">
+          <span aria-hidden="true">↻</span> 新游戏
+        </button>
+      </div>
+    </header>
+
+    <main class="game-layout">
+      <aside class="side-panel left-panel" aria-label="暂存方块与操作说明">
+        <section class="panel-card hold-card">
+          <div class="panel-heading">
+            <span>暂存</span>
+            <kbd>C</kbd>
+          </div>
+          <canvas id="holdCanvas" width="320" height="220" aria-label="暂存方块"></canvas>
+          <p class="empty-hint" id="holdHint">暂未使用</p>
+        </section>
+
+        <section class="panel-card controls-card">
+          <div class="panel-heading"><span>键盘操作</span><span class="tiny-dot"></span></div>
+          <ul class="key-list">
+            <li><span>移动</span><span class="key-cluster"><kbd>←</kbd><kbd>→</kbd></span></li>
+            <li><span>软降</span><kbd>↓</kbd></li>
+            <li><span>旋转</span><span class="key-cluster"><kbd>↑</kbd><kbd>Z</kbd></span></li>
+            <li><span>硬降</span><kbd class="wide-key">SPACE</kbd></li>
+          </ul>
+        </section>
+      </aside>
+
+      <section class="board-column" aria-label="游戏区域">
+        <div class="game-kicker"><span></span> CLASSIC MODE <span></span></div>
+        <div class="board-frame" id="boardFrame">
+          <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+          <canvas id="boardCanvas" width="600" height="1200" tabindex="0" aria-label="俄罗斯方块游戏棋盘"></canvas>
+          <div class="board-overlay is-visible" id="gameOverlay" role="dialog" aria-live="polite">
+            <div class="overlay-logo" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            <p class="overlay-eyebrow" id="overlayEyebrow">READY?</p>
+            <h1 id="overlayTitle">NEON<br />BLOCKS</h1>
+            <p id="overlayMessage">堆叠方块，完成整行，挑战最高分。</p>
+            <button class="start-button" id="startButton" type="button">开始游戏 <span>→</span></button>
+            <small id="overlayHint">按 Enter 或空格键开始</small>
+          </div>
+          <div class="line-toast" id="lineToast" aria-live="polite"></div>
+        </div>
+        <div class="status-strip">
+          <span><i class="status-light"></i><b id="statusText">等待开始</b></span>
+          <span class="desktop-tip">P / ESC 暂停 · R 重新开始</span>
+        </div>
+      </section>
+
+      <aside class="side-panel right-panel" aria-label="分数与后续方块">
+        <section class="panel-card score-card">
+          <div class="score-main">
+            <span>分数</span>
+            <strong id="scoreValue">000000</strong>
+          </div>
+          <div class="score-grid">
+            <div><span>最高</span><strong id="bestValue">000000</strong></div>
+            <div><span>等级</span><strong id="levelValue">01</strong></div>
+            <div><span>消行</span><strong id="linesValue">00</strong></div>
+            <div><span>连击</span><strong id="comboValue">—</strong></div>
+          </div>
+        </section>
+
+        <section class="panel-card next-card">
+          <div class="panel-heading"><span>接下来</span><span class="queue-count">NEXT 5</span></div>
+          <canvas id="nextCanvas" width="320" height="640" aria-label="接下来的五个方块"></canvas>
+        </section>
+      </aside>
+
+      <section class="touch-controls" aria-label="触屏操作">
+        <button type="button" data-action="left" aria-label="向左移动"><span>←</span><small>左移</small></button>
+        <button type="button" data-action="rotate" aria-label="顺时针旋转"><span>↻</span><small>旋转</small></button>
+        <button type="button" data-action="right" aria-label="向右移动"><span>→</span><small>右移</small></button>
+        <button type="button" data-action="hold" aria-label="暂存方块"><span>◇</span><small>暂存</small></button>
+        <button type="button" data-action="down" aria-label="软降"><span>↓</span><small>软降</small></button>
+        <button type="button" data-action="drop" class="drop-control" aria-label="硬降"><span>⇣</span><small>硬降</small></button>
+      </section>
+    </main>
+
+    <footer>
+      <p>标准 10 × 20 棋盘 · 7-Bag 随机器 · 本机保存最高分</p>
+    </footer>
+
+    <script src="./game.js" defer></script>
+  </body>
+</html>

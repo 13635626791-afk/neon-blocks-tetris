@@ -1,0 +1,10 @@
+{
+  "name": "Neon Blocks 经典俄罗斯方块",
+  "short_name": "Neon Blocks",
+  "description": "支持键盘和触屏操作的经典俄罗斯方块游戏",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#07090d",
+  "theme_color": "#07090d",
+  "icons": []
+}
